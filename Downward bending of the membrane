@@ -1,0 +1,38 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# --- Setup ---
+R = 3  # Radius of the domain Omega = B_3(0)
+points = 100 
+x = np.linspace(-R, R, points)
+X1, X2 = np.meshgrid(x, x)
+
+# Calculate the squared radial distance
+R_sq = X1**2 + X2**2
+
+# --- Function Calculation ---
+# u(x) = 0.1 - 1 / (||x||^2 + 1) (The negative of the original solution)
+U_altered = 0.1 - 1 / (R_sq + 1)
+
+# Set points outside the domain to NaN so they are not plotted
+U_altered = np.where(R_sq <= R**2, U_altered, np.nan)
+
+
+# --- Plotting ---
+fig = plt.figure(figsize=(10, 8))
+ax = fig.add_subplot(111, projection='3d')
+
+# Use a cool color map like 'cividis' or 'winter' for the downward well
+surface = ax.plot_surface(X1, X2, U_altered, cmap='cividis', linewidth=0, antialiased=False)
+
+# Labels
+ax.set_xlabel(r'$x_1$')
+ax.set_ylabel(r'$x_2$')
+ax.set_zlabel(r'$u(x_1, x_2)$')
+ax.set_title(r'Membrane Deformed to the Bottom: $\tilde{u}(x)=\frac{1}{10}-\frac{1}{||x||^{2}+1}$')
+ax.set_zlim(-1.0, 0.1) # Adjusted z-limit for negative displacement
+
+# Add color bar
+fig.colorbar(surface, shrink=0.5, aspect=5, label=r'Displacement $\tilde{u}$')
+
+plt.show() # Display the plot

@@ -1,0 +1,58 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# --- 1. Define Physical Constants and Domain ---
+L = 1.0  # Length of the string (m)
+P = 20.0  # Tension (N)
+rho_g = 0.8  # Density in g/m
+rho_kg = rho_g / 1000.0  # Density in kg/m (0.0008)
+
+# Calculate wave speed squared (c^2) and speed (c)
+c_squared = P / rho_kg
+c = np.sqrt(c_squared) # c approx 158.11 m/s
+
+# Define the spatial domain x (from 0 to 1)
+x = np.linspace(0, L, 100)
+
+# --- 2. Define the Solution Function u(t, x) ---
+# u(t, x) = sin(pi * x) * cos(pi * c * t)
+def u(t, x, c):
+    # np.sin(np.pi * x) is the spatial part (fundamental mode)
+    # np.cos(np.pi * c * t) is the temporal part (oscillation)
+    return np.sin(np.pi * x) * np.cos(np.pi * c * t)
+
+# --- 3. Time Instants for Sketching ---
+times = [0.0, 0.1, 0.2]
+
+# --- 4. Plotting ---
+plt.figure(figsize=(10, 6))
+
+colors = ['red', 'blue', 'green']
+labels = [f'$t = {t}$ s' for t in times]
+line_styles = ['-', '--', ':']
+
+# Calculate and plot the deviation for each time instant
+for t, color, label, linestyle in zip(times, colors, labels, line_styles):
+    U = u(t, x, c)
+    
+    # Plot the displacement
+    plt.plot(x, U, color=color, label=label, linestyle=linestyle, linewidth=2)
+    
+    # Add the amplitude value to the plot for clarity
+    # Calculate the amplitude by finding the max absolute value of U
+    amplitude = U[np.argmax(np.abs(U))]
+    plt.text(0.5, amplitude * 1.05, f'{amplitude:.3f}', ha='center', va='center', color=color, fontsize=10)
+
+
+# Final plot setup
+plt.title(r'Deviation of Guitar String (Fundamental Mode) for $P=20N, \rho=0.8g/m$')
+plt.xlabel('Position $x$ (m)')
+plt.ylabel('Displacement $u(t, x)$')
+
+# Add the equilibrium line and set fixed y-limits
+plt.axhline(0, color='black', linewidth=0.5)
+plt.ylim(-1.1, 1.1) 
+
+plt.legend()
+plt.grid(True, linestyle=':', alpha=0.6)
+plt.show() # In a local environment, use plt.show()
